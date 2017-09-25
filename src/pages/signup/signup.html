@@ -1,0 +1,90 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{ 'SIGNUP_TITLE' | translate }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <form (submit)="doSignup()">
+    <ion-list>
+
+      <ion-item>
+        <ion-label fixed>{{ 'NAME' | translate }}</ion-label>
+        <ion-input type="text" [(ngModel)]="account.name"  name="name"></ion-input>
+
+      </ion-item>
+
+      <ion-item>
+        <ion-label fixed>{{ 'EMAIL' | translate }}</ion-label>
+        <ion-input type="email" [(ngModel)]="account.email" name="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Username</ion-label>
+        <ion-input type="text" [formControl]="term"  ></ion-input>
+      </ion-item>
+      <!--
+      Want to add a Username? Here you go:
+
+     
+      -->
+
+
+      <div padding>
+        <button ion-button color="primary" block>{{ 'SIGNUP_BUTTON' | translate }}</button>
+      </div>
+
+    </ion-list>
+  </form>
+     <form [formGroup]="todo" (submit)="doSignup()">
+      <ion-item>
+        <ion-label floating>UserName</ion-label> 
+        <ion-input type="text" formControlName="userName"></ion-input>
+         <div *ngIf="todo.get('userName').status === 'PENDING'">
+        Checking...
+      </div>
+      <span 
+              class="glyphicon glyphicon-refresh glyphicon-refresh-animate text-muted form-control-feedback"
+              aria-hidden="true"></span>
+       <div *ngIf="todo.get('userName').errors && todo.get('userName').hasError('username taken') ">
+        😢 Oh noes, this username is already taken!
+      </div>
+      </ion-item>
+      
+        <!--<span>{{todo.get('userName').hasError('username taken') }} </span>
+       <div>{{  todo.controls.userName.hasError('required') }}</div>
+       <div>{{  todo.controls.userName.hasError('checkUsername') }}</div>-->
+
+      <ion-item>
+        <ion-label floating>{{ 'PASSWORD' | translate }}</ion-label>
+        <ion-input type="password" formControlName="password" name="password"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>email</ion-label>
+        <ion-input formControlName="email"></ion-input>
+      </ion-item>
+       <ion-item>
+        <ion-label floating>ΑΜΚΑ</ion-label>
+        <ion-input formControlName="amka"></ion-input>
+         <span>{{  todo.controls.userName.hasError('checkUsername')  }}</span>
+      </ion-item>
+       <ion-item>
+        <ion-label floating>Α.Φ.Μ.</ion-label>
+        <ion-input formControlName="afm"></ion-input>
+      </ion-item>
+       <ion-item>
+        <ion-label floating>amIKA</ion-label>
+        <ion-input formControlName="amIKA"></ion-input>
+      </ion-item>
+       <ion-item>
+        <ion-label floating>guideNumber</ion-label>
+        <ion-input formControlName="guideNumber"></ion-input>
+      </ion-item>
+      <!--<div padding>
+        <button ion-button color="primary" block>{{ 'SIGNUP_BUTTON' | translate }}</button>
+      </div>-->
+      <button ion-button type="submit" [disabled]="!todo.valid">Submit</button>
+    </form>
+</ion-content>
