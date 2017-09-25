@@ -9,10 +9,11 @@ import 'rxjs/add/operator/distinctUntilChanged';
 //////////////////////
 import { User } from '../../providers/providers';
 import { MainPage } from '../pages';
+import { ItemCreatePage } from '../item-create/item-create';
 
 ///////////////
 import { IAccountInfo } from "../../interfaces/interfaces";
-import { UsernameValidator } from  '../../validators/UsernameValidator';
+import { UsernameValidator } from  '../../validators/userNameValidator';
 import { LoadingController } from 'ionic-angular';
 
 
@@ -43,12 +44,13 @@ export class SignupPage {
   };
 
   // Our translated text strings
-   private signupErrorString: string;
-   term = new FormControl();
-   private todo : FormGroup;
+    private signupErrorString: string;
+    term = new FormControl();
+    private todo : FormGroup;
     public loading = false;
-  constructor(public navCtrl: NavController, 
+  constructor(public navCtrl: NavController,
     public user: User,
+    public userNameValidator: UsernameValidator,
     public toastCtrl: ToastController,
     public translateService: TranslateService,
     private formBuilder: FormBuilder,
@@ -59,21 +61,20 @@ export class SignupPage {
     })
 
      this.todo = this.formBuilder.group({
-      title: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
-      userName: ['', Validators.compose([Validators.required, Validators.pattern('[a-zA-Z]*')]), UsernameValidator.checkUsername],
-      description: [''],
-      amka: [''],
-      amIKA: [''],
-      afm: [''],
-      guideNumber: [''],
-      email: [''],
-      password: ['']
+      // title: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+       email: ['', Validators.compose([Validators.required, Validators.pattern('[a-zA-Z]*')]), this.userNameValidator.checkUsername.bind(this.userNameValidator)],
+
+
+      password: [''],
+      confPassword: [''],
+      firstName: [''],
+      lastName: [''],
     });
-  
+
     this.term.valueChanges
            .debounceTime(400)
            .distinctUntilChanged()
-           .subscribe(term => this.user.search(term).subscribe(()=> console.log('wtf')));
+           .subscribe(term => this.user.isAvailable(term).subscribe(()=> console.log('wtf')));
 
            //.subscribe(()=>console.log("wtf"));
           //  let loader = this.loadingCtrl.create({
@@ -87,14 +88,15 @@ export class SignupPage {
   logForm(){
       console.log(this.todo.value)
     }
-  
+
   doSignup() {
+    console.log(this.todo.value)
     // Attempt to login in through our User service
-    this.user.signup(this.account).subscribe((resp) => {
+    this.user.signup(this.todo.value).subscribe((resp) => {
       this.navCtrl.push(MainPage);
     }, (err) => {
 
-      this.navCtrl.push(MainPage);
+      //this.navCtrl.push(MainPage);
 
       // Unable to sign up
       let toast = this.toastCtrl.create({

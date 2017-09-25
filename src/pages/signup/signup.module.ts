@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
+import { ItemCreatePage } from '../../pages/item-create/item-create';
 
 import { SignupPage } from './signup';
 
 @NgModule({
   declarations: [
     SignupPage,
+    ItemCreatePage,
+
   ],
   imports: [
     IonicPageModule.forChild(SignupPage),

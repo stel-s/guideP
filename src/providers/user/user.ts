@@ -34,7 +34,7 @@ export class User {
 
   constructor(public http: Http, public api: Api, private jsonp: Jsonp) {
   }
- 
+
  search (term: string) {
   var search = new URLSearchParams()
   search.set('action', 'opensearch');
@@ -44,6 +44,30 @@ export class User {
               .get('http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK', { search })
               .map((response) => response.json()[1]);
 }
+
+  isAvailable (term: string) {
+    let USERNAME = term;
+    //var search = new URLSearchParams()
+
+
+    let seq = this.api.get(`gocore/user/isAvailable/email/${USERNAME}`).share();
+
+    seq
+      .map(res => res.json())
+      .subscribe(res => {
+        console.log(res);
+        // If the API returned a successful response, mark the user as logged in
+        if (res.status == 'success') {
+
+        } else {
+        }
+      }, err => {
+        console.error('ERROR', err);
+      });
+
+    return seq;
+  }
+
   /**
    * Send a POST request to our login endpoint with the data
    * the user entered on the form.
@@ -71,7 +95,7 @@ export class User {
    * the user entered on the form.
    */
   signup(accountInfo: IAccountInfo) {
-    let seq = this.api.post('signup', accountInfo).share();
+    let seq = this.api.post('gocore/user/create/guide', accountInfo).share();
 
     seq
       .map(res => res.json())
@@ -83,7 +107,7 @@ export class User {
       }, err => {
         console.error('ERROR', err);
       });
- 
+
     return seq;
   }
 
@@ -102,7 +126,7 @@ export class User {
       }, err => {
         console.error('ERROR', err);
       });
-       
+
     return seq;
   }
   /**
