@@ -2,7 +2,7 @@ import 'rxjs/add/operator/map';
 
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, URLSearchParams } from '@angular/http';
-
+  
 /**
  * Api is a generic REST Api handler. Set your API url first.
  */
@@ -12,12 +12,13 @@ export class Api {
 
   constructor(public http: Http) {
   }
-
+  
   get(endpoint: string, params?: any, options?: RequestOptions) {
     if (!options) {
       options = new RequestOptions();
     }
-
+    //  let headers = new Headers({ 'Authorization': 'Bearer ' + this.authenticationService.token });
+    //     let options = new RequestOptions({ headers: headers });
     // Support easy query params for GET requests
     if (params) {
       let p = new URLSearchParams();

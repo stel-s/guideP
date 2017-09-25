@@ -17,11 +17,11 @@ export class LoginPage {
   // The account fields for the login form.
   // If you're using the username field with or without email, make
   // sure to add it to the type
-  account: { userName: string, password: string } = {
-    userName: 'test@example.com',
+  account: { username: string, password: string } = {
+    username: 'test@example.com',
     password: 'test'
   };
-
+  token: any;
   // Our translated text strings
   private loginErrorString: string;
 
@@ -33,8 +33,8 @@ export class LoginPage {
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
-    })
-  }
+    });
+   }
 
   // Attempt to login in through our User service
   doLogin() {
@@ -43,8 +43,12 @@ export class LoginPage {
     // this.auth.login('basic', {'email':this.email, 'password':this.password}).then(()=>{
     //     loading.dismissAll();
     // });
-    console.log(this.account.userName)
+    console.log(this.account.username)
     this.user.login(this.account).subscribe((resp) => {
+      if(resp){
+         this.token = resp;
+          //localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
+      }
       console.log(resp)
       this.navCtrl.push(MainPage);
        loading.dismissAll();

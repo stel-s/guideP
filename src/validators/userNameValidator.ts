@@ -9,7 +9,7 @@ export class UsernameValidator {
       //Fake a slow response from server
  
       setTimeout(() => {
-        if(control.value.toLowerCase() === "greg"){
+        if(control.value.toLowerCase() === "stel"){
                 console.log("WTF")
           resolve({
             "username taken": true

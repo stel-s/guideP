@@ -83,10 +83,28 @@ export class User {
       }, err => {
         console.error('ERROR', err);
       });
-
+ 
     return seq;
   }
 
+  getProfile(accountInfo: IAccountInfo) {
+     // let headers = new Headers({ 'Authorization': 'Bearer ' + this.authenticationService.token });
+     // let options = new RequestOptions({ headers: headers });
+    let seq = this.api.post('signup', accountInfo).share();
+
+    seq
+      .map(res => res.json())
+      .subscribe(res => {
+        // If the API returned a successful response, mark the user as logged in
+        if (res.status == 'success') {
+          this._loggedIn(res);
+        }
+      }, err => {
+        console.error('ERROR', err);
+      });
+       
+    return seq;
+  }
   /**
    * Log the user out, which forgets the session
    */
