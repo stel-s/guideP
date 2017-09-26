@@ -6,6 +6,7 @@ import { User } from '../../providers/providers';
 import { MainPage } from '../pages';
 /////
 import { LoadingController } from 'ionic-angular';
+import {JwtHelper} from "angular2-jwt";
 
 
 @IonicPage()
@@ -18,12 +19,14 @@ export class LoginPage {
   // If you're using the username field with or without email, make
   // sure to add it to the type
   account: { username: string, password: string } = {
-    username: 'test@example.com',
-    password: 'test'
+    username: 'stel',
+    password: 'stel'
   };
   token: any;
   // Our translated text strings
   private loginErrorString: string;
+
+  jwtHelper = new JwtHelper();
 
   constructor(public navCtrl: NavController,
     public user: User,
@@ -40,13 +43,12 @@ export class LoginPage {
   doLogin() {
     let loading = this.loadingCtrl.create({content : "Logging in ,please wait..."});
     loading.present();
-    // this.auth.login('basic', {'email':this.email, 'password':this.password}).then(()=>{
-    //     loading.dismissAll();
-    // });
-    console.log(this.account.username)
-    this.user.login(this.account).subscribe((resp) => {
+    
+    this.user.login(this.account).subscribe((resp:any) => {
+      console.log(resp)
       if(resp){
          this.token = resp;
+          console.log(this.jwtHelper.decodeToken(resp._body));
           //localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
       }
       console.log(resp)

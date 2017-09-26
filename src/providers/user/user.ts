@@ -8,6 +8,8 @@ import { Api } from '../api/api';
 
 import { IAccountInfo } from "../../interfaces/interfaces";
 
+import {JwtHelper} from "angular2-jwt";
+import {Storage} from "@ionic/storage";
 
 /**
  * Most apps have the concept of a User. This is a simple provider
@@ -31,8 +33,9 @@ import { IAccountInfo } from "../../interfaces/interfaces";
 @Injectable()
 export class User {
   _user: any;
+  jwtHelper = new JwtHelper();
 
-  constructor(public http: Http, public api: Api, private jsonp: Jsonp) {
+  constructor(public http: Http, public api: Api, private jsonp: Jsonp, public storage: Storage) {
   }
 
  search (term: string) {
@@ -76,13 +79,14 @@ export class User {
     let seq = this.api.post('gocore/authenticate', accountInfo).share();
 
     seq
-      .map(res => res.json())
+      .map(res => res)
       .subscribe(res => {
+        
         // If the API returned a successful response, mark the user as logged in
-        if (res.status == 'success') {
-          this._loggedIn(res);
-        } else {
-        }
+        // if (res.status == 'success') {
+        //   this._loggedIn(res);
+        // } else {
+        // }
       }, err => {
         console.error('ERROR', err);
       });
@@ -141,5 +145,12 @@ export class User {
    */
   _loggedIn(resp) {
     this._user = resp.user;
+  }
+
+  authSuccess(token) {
+    // this.error = null;
+    this.storage.set('token', token);
+    this._user = this.jwtHelper.decodeToken(token);
+    this.storage.set('profile', this._user);
   }
 }

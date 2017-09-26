@@ -15,6 +15,8 @@ import { ItemCreatePage } from '../item-create/item-create';
 import { IAccountInfo } from "../../interfaces/interfaces";
 import { UsernameValidator } from  '../../validators/userNameValidator';
 import { LoadingController } from 'ionic-angular';
+////
+import {JwtHelper} from "angular2-jwt";
 
 
 @IonicPage()
@@ -48,6 +50,12 @@ export class SignupPage {
     term = new FormControl();
     private todo : FormGroup;
     public loading = false;
+  
+    jwtHelper = new JwtHelper();
+
+
+
+
   constructor(public navCtrl: NavController,
     public user: User,
     public userNameValidator: UsernameValidator,
@@ -62,7 +70,7 @@ export class SignupPage {
 
      this.todo = this.formBuilder.group({
       // title: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
-       email: ['', Validators.compose([Validators.required, Validators.pattern('[a-zA-Z]*')]), this.userNameValidator.checkUsername.bind(this.userNameValidator)],
+       email: ['', Validators.compose([Validators.required, this.emailValidator]), this.userNameValidator.checkUsername.bind(this.userNameValidator)],
 
 
       password: [''],
@@ -84,7 +92,13 @@ export class SignupPage {
           // loader.present();
   }
 
+ emailValidator(control) {
+    var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
 
+    if (!EMAIL_REGEXP.test(control.value)) {
+      return {invalidEmail: true};
+    }
+  }
   logForm(){
       console.log(this.todo.value)
     }
@@ -106,6 +120,12 @@ export class SignupPage {
       });
       toast.present();
     });
+  }
+   authSuccess(token) {
+    // this.error = null;
+    // this.storage.set('token', token);
+    // this.user = this.jwtHelper.decodeToken(token).username;
+    // this.storage.set('profile', this.user);
   }
 }
 
