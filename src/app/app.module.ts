@@ -21,6 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingModule } from 'ngx-loading';
 
 import { UsernameValidator } from  '../validators/userNameValidator';
+import { ItemCreatePage } from '../pages/item-create/item-create';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -46,6 +47,7 @@ export function provideSettings(storage: Storage) {
 @NgModule({
   declarations: [
     MyApp,
+    ItemCreatePage
   ],
   imports: [
     LoadingModule,

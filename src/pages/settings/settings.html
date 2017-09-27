@@ -7,58 +7,137 @@
 </ion-header>
 
 <ion-content>
+  <div padding>
+    <ion-segment [(ngModel)]="pet">
+      <ion-segment-button value="Διαφορα">
+        Διαφορα
+      </ion-segment-button>
+      <ion-segment-button value="Προσωπικο">
+        Προσωπικο
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  <div [ngSwitch]="pet">
+    <ion-list *ngSwitchCase="'Προσωπικο'">
+      <ion-grid>
+        <ion-row>
 
-  <form [formGroup]="form" *ngIf="settingsReady">
-    <ion-list *ngIf="page == 'main'">
-      <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION1' | translate }}</ion-label>
-        <ion-toggle formControlName="option1"></ion-toggle>
-      </ion-item>
+        </ion-row>
+        <ion-row>
 
-      <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION2' | translate }}</ion-label>
-        <ion-input formControlName="option2"></ion-input>
-      </ion-item>
+          <ion-col col-2>
+            <form [formGroup]="form">
 
-      <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION3' | translate }}</ion-label>
-        <ion-select formControlName="option3">
-          <ion-option value="1" checked="true">1</ion-option>
-          <ion-option value="2">2</ion-option>
-          <ion-option value="3">3</ion-option>
-        </ion-select>
-      </ion-item>
+              <input type="file" #fileInput style="visibility: hidden; height: 0px" name="files[]" (change)="processWebImage($event)" />
+            </form>
+            <div class="profile-image-wrapper" (click)="getPicture()">
+              <div class="profile-image-placeholder">
+                <ion-icon name="add"></ion-icon>
+                <div>
+                  choose image
+                </div>
+              </div>
 
-      <button ion-item [navPush]="subSettings" [navParams]="profileSettings">
-        {{ 'SETTINGS_PROFILE_BUTTON' | translate }}
-      </button>
+            </div></ion-col>
+          <ion-col col-8>
+            <!--<form [formGroup]="form" *ngIf="settingsReady">-->
+            <!--<ion-list *ngIf="page == 'main'">-->
+            <!--<ion-item>-->
+            <!--<ion-label>{{ 'SETTINGS_OPTION1' | translate }}</ion-label>-->
+            <!--<ion-toggle formControlName="option1"></ion-toggle>-->
+            <!--</ion-item>-->
+
+            <!--<ion-item>-->
+            <!--<ion-label>{{ 'SETTINGS_OPTION2' | translate }}</ion-label>-->
+            <!--<ion-input formControlName="option2"></ion-input>-->
+            <!--</ion-item>-->
+
+            <!--<ion-item>-->
+            <!--<ion-label>{{ 'SETTINGS_OPTION3' | translate }}</ion-label>-->
+            <!--<ion-select formControlName="option3">-->
+            <!--<ion-option value="1" checked="true">1</ion-option>-->
+            <!--<ion-option value="2">2</ion-option>-->
+            <!--<ion-option value="3">3</ion-option>-->
+            <!--</ion-select>-->
+            <!--</ion-item>-->
+
+            <!--<button ion-item [navPush]="subSettings" [navParams]="profileSettings">-->
+            <!--{{ 'SETTINGS_PROFILE_BUTTON' | translate }}-->
+            <!--</button>-->
+            <!--</ion-list>-->
+
+            <!--<ion-list *ngIf="page == 'profile'">-->
+            <!--<ion-item>-->
+            <!--<ion-label>{{ 'SETTINGS_OPTION4' | translate }}</ion-label>-->
+            <!--<ion-input formControlName="option4"></ion-input>-->
+            <!--</ion-item>-->
+            <!--</ion-list>-->
+            <!--</form>-->
+          </ion-col>
+          <ion-col col-2>This column will take 6 columns</ion-col>
+          <form >
+            <ion-item>
+              <ion-label floating>Username</ion-label>
+              <ion-input type="text"  [formControl]="test"  ></ion-input>
+            </ion-item>
+          </form>
+          <form [formGroup]="extProfile" (submit)="save()">
+
+            <ion-item>
+              <ion-label floating>ΑΜΚΑ</ion-label>
+              <ion-input clearInput formControlName="amka"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label floating>Α.Φ.Μ.</ion-label>
+              <ion-input clearInput formControlName="afm"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label floating>amIKA</ion-label>
+              <ion-input clearInput formControlName="amIKA"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label floating>guideNumber</ion-label>
+              <ion-input clearInput formControlName="guideNumber"></ion-input>
+            </ion-item>
+          </form>
+        </ion-row>
+      </ion-grid>
+
     </ion-list>
 
-    <ion-list *ngIf="page == 'profile'">
+    <ion-list *ngSwitchCase="'Διαφορα'">
       <ion-item>
-        <ion-label>{{ 'SETTINGS_OPTION4' | translate }}</ion-label>
-        <ion-input formControlName="option4"></ion-input>
+        <ion-thumbnail item-start>
+          <img src="img/thumbnail-kitten-1.jpg">
+        </ion-thumbnail>
+        <h2>Διαφορα</h2>
       </ion-item>
+      ...
     </ion-list>
-  </form>
-  <form *ngIf="form" [formGroup]="form" (ngSubmit)="createItem()">
-    <input type="file" #fileInput style="visibility: hidden; height: 0px" name="files[]" (change)="processWebImage($event)" />
-    <div class="profile-image-wrapper" (click)="getPicture()">
-      <div class="profile-image-placeholder" *ngIf="!this.form.controls.profilePic.value">
-        <ion-icon name="add"></ion-icon>
-        <div>
-          {{ 'ITEM_CREATE_CHOOSE_IMAGE' | translate }}
-        </div>
-      </div>
-      <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.controls.profilePic.value"></div>
-    </div>
-    <ion-list>
-      <ion-item>
-        <ion-input type="text" placeholder="{{ 'ITEM_NAME_PLACEHOLDER' | translate }}" formControlName="name"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input type="text" placeholder="{{ 'ITEM_ABOUT_PLACEHOLDER' | translate }}" formControlName="about"></ion-input>
-      </ion-item>
-    </ion-list>
-  </form>
+  </div>
+
+  <button ion-button (click)="logOut()">Αποσυνδεση</button>
+  <button ion-button (click)="save()">αποθηκευση</button>
+
 </ion-content>
+<!--<form *ngIf="form" [formGroup]="form" (ngSubmit)="createItem()">-->
+  <!--<input type="file" #fileInput style="visibility: hidden; height: 0px" name="files[]" (change)="processWebImage($event)" />-->
+  <!--<div class="profile-image-wrapper" (click)="getPicture()">-->
+    <!--<div class="profile-image-placeholder" *ngIf="!this.form.controls.profilePic.value">-->
+      <!--<ion-icon name="add"></ion-icon>-->
+      <!--<div>-->
+        <!--{{ 'ITEM_CREATE_CHOOSE_IMAGE' | translate }}-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.controls.profilePic.value"></div>-->
+  <!--</div>-->
+  <!--<ion-list>-->
+    <!--<ion-item>-->
+      <!--<ion-input type="text" placeholder="{{ 'ITEM_NAME_PLACEHOLDER' | translate }}" formControlName="name"></ion-input>-->
+    <!--</ion-item>-->
+    <!--<ion-item>-->
+      <!--<ion-input type="text" placeholder="{{ 'ITEM_ABOUT_PLACEHOLDER' | translate }}" formControlName="about"></ion-input>-->
+    <!--</ion-item>-->
+  <!--</ion-list>-->
+<!--</form>-->

@@ -1,10 +1,16 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Camera } from '@ionic-native/camera';
 
 import { Settings } from '../../providers/providers';
-
+import { User } from '../../providers/providers';
+import { UsernameValidator } from  '../../validators/userNameValidator';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 /**
  * The Settings page is a simple form that syncs with a Settings provider
  * to enable the user to customize settings for the app.
@@ -16,6 +22,9 @@ import { Settings } from '../../providers/providers';
   templateUrl: 'settings.html'
 })
 export class SettingsPage {
+  @ViewChild('fileInput') fileInput;
+  isReadyToSave: boolean;
+
   // Our local settings object
   options: any;
 
@@ -33,12 +42,72 @@ export class SettingsPage {
   pageTitle: string;
 
   subSettings: any = SettingsPage;
+  private extProfile : FormGroup;
+  test = new FormControl();
 
   constructor(public navCtrl: NavController,
     public settings: Settings,
     public formBuilder: FormBuilder,
     public navParams: NavParams,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+    public user: User,
+    public userNameValidator: UsernameValidator,
+    public camera:Camera,
+
+  ) {
+    this.test.valueChanges
+      .debounceTime(400)
+      .distinctUntilChanged()
+
+    this.form = formBuilder.group({
+      profilePic: [''],
+      name: ['', Validators.required],
+      about: ['']
+    });
+
+    // Watch the form for changes, and
+    this.form.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.form.valid;
+    });
+
+    this.extProfile = this.formBuilder.group({
+      amka: ['123',Validators.compose([Validators.required]), this.userNameValidator.checkAFM.bind(this.userNameValidator)],
+      afm: [''],
+      amIKA: [''],
+      guideNumber: [''],
+      lastName: [''],
+    });
+
+  }
+  getPicture() {
+    if (Camera['installed']()) {
+      this.camera.getPicture({
+        destinationType: this.camera.DestinationType.DATA_URL,
+        targetWidth: 96,
+        targetHeight: 96
+      }).then((data) => {
+        this.form.patchValue({ 'profilePic': 'data:image/jpg;base64,' + data });
+      }, (err) => {
+        alert('Unable to take photo');
+      })
+    } else {
+      this.fileInput.nativeElement.click();
+    }
+  }
+
+  processWebImage(event) {
+    let reader = new FileReader();
+    reader.onload = (readerEvent) => {
+
+      let imageData = (readerEvent.target as any).result;
+      this.form.patchValue({ 'profilePic': imageData });
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  getProfileImageStyle() {
+    return 'url(' + this.form.controls['profilePic'].value + ')'
   }
 
   _buildForm() {
@@ -87,9 +156,14 @@ export class SettingsPage {
 
       this._buildForm();
     });
+    console.log(this.user);
   }
 
   ngOnChanges() {
     console.log('Ng All Changes');
+  }
+
+  logOut() {
+   this.user.logout();
   }
 }

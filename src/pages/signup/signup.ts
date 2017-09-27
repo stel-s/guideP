@@ -50,7 +50,7 @@ export class SignupPage {
     term = new FormControl();
     private todo : FormGroup;
     public loading = false;
-  
+
     jwtHelper = new JwtHelper();
 
 
@@ -109,7 +109,20 @@ export class SignupPage {
     this.user.signup(this.todo.value).subscribe((resp) => {
       this.navCtrl.push(MainPage);
     }, (err) => {
-
+      let errors = '';
+      for(let e of err.details) {
+        console.log(e);
+        if(e === 'required_email') errors += 'Email is required.<br/>';
+        if(e === 'required_password') errors += 'Password is required.<br/>';
+        if(e === 'conflict_email') errors += 'A user with this email already exists.<br/>';
+        //don't need to worry about conflict_username
+        if(e === 'invalid_email') errors += 'Your email address isn\'t valid.';
+      }
+      // let alert = this.alertCtrl.create({
+      //   title:'Register Error',
+      //   subTitle:errors,
+      //   buttons:['OK']
+      // });
       //this.navCtrl.push(MainPage);
 
       // Unable to sign up
@@ -121,12 +134,7 @@ export class SignupPage {
       toast.present();
     });
   }
-   authSuccess(token) {
-    // this.error = null;
-    // this.storage.set('token', token);
-    // this.user = this.jwtHelper.decodeToken(token).username;
-    // this.storage.set('profile', this.user);
-  }
+
 }
 
 

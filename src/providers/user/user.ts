@@ -1,16 +1,20 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
-import { Injectable } from '@angular/core';
-import { Http, URLSearchParams, Jsonp } from '@angular/http';
+import {Injectable} from '@angular/core';
+import {Http, URLSearchParams, Jsonp} from '@angular/http';
 
-import { Api } from '../api/api';
+import {Api} from '../api/api';
 
-import { IAccountInfo } from "../../interfaces/interfaces";
+import {IAccountInfo} from "../../interfaces/interfaces";
 
 import {JwtHelper} from "angular2-jwt";
 import {Storage} from "@ionic/storage";
 
+interface IUser {
+  firstName?: string;
+  lastName?: string;
+}
 /**
  * Most apps have the concept of a User. This is a simple provider
  * with stubs for login/signup/etc.
@@ -31,24 +35,29 @@ import {Storage} from "@ionic/storage";
  * If the `status` field is not `success`, then an error is detected and returned.
  */
 @Injectable()
-export class User {
-  _user: any;
+export class User implements  IUser{
+  _user: IUser;
+
   jwtHelper = new JwtHelper();
 
   constructor(public http: Http, public api: Api, private jsonp: Jsonp, public storage: Storage) {
   }
 
- search (term: string) {
-  var search = new URLSearchParams()
-  search.set('action', 'opensearch');
-  search.set('search', term);
-  search.set('format', 'json');
-  return this.jsonp
-              .get('http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK', { search })
-              .map((response) => response.json()[1]);
-}
+  search(term: string) {
+    var search = new URLSearchParams()
+    search.set('action', 'opensearch');
+    search.set('search', term);
+    search.set('format', 'json');
+    return this.jsonp
+      .get('http://en.wikipedia.org/w/api.php?callback=JSONP_CALLBACK', {search})
+      .map((response) => response.json()[1]);
+  }
 
-  isAvailable (term: string) {
+  get firstName() {
+    return this._user.firstName;
+  }S
+
+  isAvailable(term: string) {
     let USERNAME = term;
     //var search = new URLSearchParams()
 
@@ -80,8 +89,15 @@ export class User {
 
     seq
       .map(res => res)
-      .subscribe(res => {
-        
+      .subscribe((res:any) => {
+        if(res){
+
+          console.log(this.jwtHelper.decodeToken(res._body));
+          this.authSuccess(res._body);
+          //localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
+
+        }
+        console.log(res)
         // If the API returned a successful response, mark the user as logged in
         // if (res.status == 'success') {
         //   this._loggedIn(res);
@@ -116,8 +132,8 @@ export class User {
   }
 
   getProfile(accountInfo: IAccountInfo) {
-     // let headers = new Headers({ 'Authorization': 'Bearer ' + this.authenticationService.token });
-     // let options = new RequestOptions({ headers: headers });
+    // let headers = new Headers({ 'Authorization': 'Bearer ' + this.authenticationService.token });
+    // let options = new RequestOptions({ headers: headers });
     let seq = this.api.post('signup', accountInfo).share();
 
     seq
@@ -133,6 +149,7 @@ export class User {
 
     return seq;
   }
+
   /**
    * Log the user out, which forgets the session
    */
@@ -149,6 +166,7 @@ export class User {
 
   authSuccess(token) {
     // this.error = null;
+    console.log(token);
     this.storage.set('token', token);
     this._user = this.jwtHelper.decodeToken(token);
     this.storage.set('profile', this._user);

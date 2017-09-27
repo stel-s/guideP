@@ -43,15 +43,9 @@ export class LoginPage {
   doLogin() {
     let loading = this.loadingCtrl.create({content : "Logging in ,please wait..."});
     loading.present();
-    
+
     this.user.login(this.account).subscribe((resp:any) => {
-      console.log(resp)
-      if(resp){
-         this.token = resp;
-          console.log(this.jwtHelper.decodeToken(resp._body));
-          //localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-      }
-      console.log(resp)
+
       this.navCtrl.push(MainPage);
        loading.dismissAll();
     }, (err) => {
